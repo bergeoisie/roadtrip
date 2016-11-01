@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Chicago",
+    "state": "IL",
+    "awesomeness": 5
+  },
+  {
+    "name": "Fargo",
+    "state": "ND",
+    "awesomeness": 2
+  },
+  {
+    "name": "Bozeman"
+    "state": "MT",
+    "awesomeness": 4
+  }
+]
