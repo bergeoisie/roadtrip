@@ -1,17 +1,77 @@
 [
   {
-    "name": "Chicago",
+    "city": "Chicago",
     "state": "IL",
     "awesomeness": 5
   },
   {
-    "name": "Fargo",
+    "city": "Fargo",
     "state": "ND",
     "awesomeness": 2
   },
   {
-    "name": "Bozeman"
+    "city": "Bozeman",
     "state": "MT",
     "awesomeness": 4
+  },
+  {
+    "city": "Indianapolis",
+    "state": "IN",
+    "awesomeness": 1
+  },
+  {
+    "city": "Denver",
+    "state": "CO",
+    "awesomeness": 5
+  },
+  {
+    "city": "Louisville",
+    "state": "KY",
+    "awesomeness": 4
+  },
+  {
+    "city": "Kansas City",
+    "state": "MO",
+    "awesomeness": 4
+  },
+  {
+    "city": "Oklahoma City",
+    "state": "OK",
+    "awesomeness": 2
+  },
+  {
+    "city": "Omaha",
+    "state": "NE",
+    "awesomeness": 2
+  },
+  {
+    "city": "Rapid City",
+    "state": "SD",
+    "awesomeness": 2
+  },
+  {
+    "city": "Salt Lake City",
+    "state": "UT",
+    "awesomeness": 5
+  },
+  {
+    "city": "Boise",
+    "state": "ID",
+    "awesomeness": 3
+  },
+  {
+    "city": "Spokane",
+    "state": "WA",
+    "awesomeness": 2
+  },
+  {
+    "city": "Madison",
+    "state": "WI",
+    "awesomeness": 5
+  },
+  {
+    "city": "Des Moines",
+    "state": "IA",
+    "awesomeness": 2
   }
 ]
