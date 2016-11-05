@@ -1,6 +1,8 @@
 /**
   * Created by brberg on 10/25/16.
   */
+import com.brendy.City
+import com.brendy.Routes
 import com.google.maps.DistanceMatrixApi
 import com.google.maps.GeoApiContext
 
@@ -14,12 +16,6 @@ import org.json4s.native.JsonMethods._
 import scala.collection.mutable.ArrayBuffer
 import scalax.collection.edge.WDiEdge
 
-
-case class City(name: String, state: String, awesomeness: Int) {
-  def cityState() : String = {
-    return name + ", " + state
-  }
-}
 
 object Roadtrip {
 
@@ -39,11 +35,13 @@ object Roadtrip {
 
     val cities = parse(lines).extract[List[City]].toArray
 
-    cities.foreach(city => println(city.name))
+    cities.foreach(city => println(city.city))
 
     val context = new GeoApiContext().setApiKey(GOOGLE_API_KEY);
 
     val graph = calculateRoutes(context, 13,cities)
+
+    val routes = new Routes(graph)
 
     println(graph.toString)
 
@@ -52,9 +50,9 @@ object Roadtrip {
   def calculateRoutes(context: GeoApiContext, maxDriveInHours: Int, cityList: Array[City]) : Graph[City,WDiEdge] = {
       val fullCityList = cityList ++ Array(reston,seattle)
 
-      val graph = Graph(reston, reston ~> seattle % 3356345)
+      val graph = Graph[City,WDiEdge](reston)
 
-      val routes = cityList.map( city => findRoutesFromCity(context, maxDriveInHours, city, fullCityList) ).reduce(_ ++ _)
+      val routes = fullCityList.map( city => findRoutesFromCity(context, maxDriveInHours, city, fullCityList) ).reduce(_ ++ _)
 
       return graph ++ routes
   }
@@ -70,7 +68,7 @@ object Roadtrip {
     distMatrix.rows.foreach{ row =>
       row.elements.zipWithIndex.foreach{ case(element,i) =>
         println("From " + originCity.cityState() + " to " + cityList(i).cityState() + ": " + element.duration.inSeconds)
-        if(element.duration.inSeconds > maxDriveInSeconds) {
+        if(element.duration.inSeconds < maxDriveInSeconds) {
           println("Adding: cityList(i) ")
           edgesToAdd += originCity ~> cityList(i) % element.duration.inSeconds
         }
