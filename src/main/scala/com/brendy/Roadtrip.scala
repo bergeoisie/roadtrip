@@ -22,6 +22,8 @@ object Roadtrip {
   val reston = City("Reston","VA", 5)
   val seattle = City("Seattle", "WA", 5)
 
+  val MIN_HOURS = 7
+  val MAX_HOURS = 12
 
   def main(args: Array[String]): Unit = {
 
@@ -47,19 +49,24 @@ object Roadtrip {
 
   }
 
-  def calculateRoutes(context: GeoApiContext, maxDriveInHours: Int, cityList: Array[City]) : Graph[City,WDiEdge] = {
+  def isFeasibleDistance(routeLengthInSeconds: Long): Boolean = {
+    val maxDriveInSeconds = MAX_HOURS * 60 * 60;
+    val minDriveInSeconds = MIN_HOURS * 60 * 60;
+
+    return (routeLengthInSeconds > minDriveInSeconds) && (routeLengthInSeconds < maxDriveInSeconds)
+  }
+
+  def calculateRoutes(context: GeoApiContext, cityList: Array[City]) : Graph[City,WDiEdge] = {
       val fullCityList = cityList ++ Array(reston,seattle)
 
       val graph = Graph[City,WDiEdge](reston)
 
-      val routes = fullCityList.map( city => findRoutesFromCity(context, maxDriveInHours, city, fullCityList) ).reduce(_ ++ _)
+      val routes = fullCityList.map( city => findRoutesFromCity(context, city, fullCityList) ).reduce(_ ++ _)
 
       return graph ++ routes
   }
 
-  def findRoutesFromCity(context: GeoApiContext, maxDriveInHours: Int, originCity: City, cityList: Array[City]) : List[WDiEdge[City]] = {
-
-    val maxDriveInSeconds = maxDriveInHours * 60 * 60
+  def findRoutesFromCity(context: GeoApiContext, originCity: City, cityList: Array[City]) : List[WDiEdge[City]] = {
 
     val distMatrix = DistanceMatrixApi.getDistanceMatrix(context,Array(originCity.cityState()), cityList.map(city => city.cityState())).await()
 
@@ -68,7 +75,7 @@ object Roadtrip {
     distMatrix.rows.foreach{ row =>
       row.elements.zipWithIndex.foreach{ case(element,i) =>
         println("From " + originCity.cityState() + " to " + cityList(i).cityState() + ": " + element.duration.inSeconds)
-        if(element.duration.inSeconds < maxDriveInSeconds) {
+        if(isFeasibleDistance(element.duration.inSeconds)) {
           println("Adding: cityList(i) ")
           edgesToAdd += originCity ~> cityList(i) % element.duration.inSeconds
         }
