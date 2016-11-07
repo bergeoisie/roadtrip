@@ -22,6 +22,8 @@ object Roadtrip {
   val reston = City("Reston","VA", 5)
   val seattle = City("Seattle", "WA", 5)
 
+  val MIN_HOURS = 7
+  val MAX_HOURS = 12
 
   def main(args: Array[String]): Unit = {
 
@@ -39,7 +41,7 @@ object Roadtrip {
 
     val context = new GeoApiContext().setApiKey(GOOGLE_API_KEY);
 
-    val graph = calculateRoutes(context, 13,cities)
+    val graph = calculateRoutes(context, cities)
 
     val routes = new Routes(graph)
 
@@ -47,19 +49,32 @@ object Roadtrip {
 
   }
 
-  def calculateRoutes(context: GeoApiContext, maxDriveInHours: Int, cityList: Array[City]) : Graph[City,WDiEdge] = {
-      val fullCityList = cityList ++ Array(reston,seattle)
+  def isFeasibleDistance(routeLengthInSeconds: Long): Boolean = {
+    val maxDriveInSeconds = MAX_HOURS * 60 * 60;
+    val minDriveInSeconds = MIN_HOURS * 60 * 60;
+
+    return (routeLengthInSeconds > minDriveInSeconds) && (routeLengthInSeconds < maxDriveInSeconds)
+  }
+
+  def calculateRoutes(context: GeoApiContext, cityList: Array[City]) : Graph[City,WDiEdge] = {
 
       val graph = Graph[City,WDiEdge](reston)
 
-      val routes = fullCityList.map( city => findRoutesFromCity(context, maxDriveInHours, city, fullCityList) ).reduce(_ ++ _)
+      var routes = List.empty[WDiEdge[City]];
+
+      val cityListWithOrigin = cityList ++ Array(reston)
+      val fullCityList = cityList ++ Array(reston,seattle)
+
+      cityListWithOrigin.foreach{ city =>
+        fullCityList.grouped(22).toList.foreach { batchedList =>
+          routes = routes ++ findRoutesFromCity(context, city, batchedList)
+        }
+      }
 
       return graph ++ routes
   }
 
-  def findRoutesFromCity(context: GeoApiContext, maxDriveInHours: Int, originCity: City, cityList: Array[City]) : List[WDiEdge[City]] = {
-
-    val maxDriveInSeconds = maxDriveInHours * 60 * 60
+  def findRoutesFromCity(context: GeoApiContext, originCity: City, cityList: Array[City]) : List[WDiEdge[City]] = {
 
     val distMatrix = DistanceMatrixApi.getDistanceMatrix(context,Array(originCity.cityState()), cityList.map(city => city.cityState())).await()
 
@@ -68,7 +83,7 @@ object Roadtrip {
     distMatrix.rows.foreach{ row =>
       row.elements.zipWithIndex.foreach{ case(element,i) =>
         println("From " + originCity.cityState() + " to " + cityList(i).cityState() + ": " + element.duration.inSeconds)
-        if(element.duration.inSeconds < maxDriveInSeconds) {
+        if(isFeasibleDistance(element.duration.inSeconds)) {
           println("Adding: cityList(i) ")
           edgesToAdd += originCity ~> cityList(i) % element.duration.inSeconds
         }
