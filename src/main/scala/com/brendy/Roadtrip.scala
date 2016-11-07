@@ -41,7 +41,7 @@ object Roadtrip {
 
     val context = new GeoApiContext().setApiKey(GOOGLE_API_KEY);
 
-    val graph = calculateRoutes(context, 13,cities)
+    val graph = calculateRoutes(context, cities)
 
     val routes = new Routes(graph)
 
@@ -57,11 +57,19 @@ object Roadtrip {
   }
 
   def calculateRoutes(context: GeoApiContext, cityList: Array[City]) : Graph[City,WDiEdge] = {
-      val fullCityList = cityList ++ Array(reston,seattle)
 
       val graph = Graph[City,WDiEdge](reston)
 
-      val routes = fullCityList.map( city => findRoutesFromCity(context, city, fullCityList) ).reduce(_ ++ _)
+      var routes = List.empty[WDiEdge[City]];
+
+      val cityListWithOrigin = cityList ++ Array(reston)
+      val fullCityList = cityList ++ Array(reston,seattle)
+
+      cityListWithOrigin.foreach{ city =>
+        fullCityList.grouped(22).toList.foreach { batchedList =>
+          routes = routes ++ findRoutesFromCity(context, city, batchedList)
+        }
+      }
 
       return graph ++ routes
   }

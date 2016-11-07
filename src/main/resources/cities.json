@@ -20,11 +20,6 @@
     "awesomeness": 1
   },
   {
-    "city": "Denver",
-    "state": "CO",
-    "awesomeness": 5
-  },
-  {
     "city": "Louisville",
     "state": "KY",
     "awesomeness": 4
@@ -73,5 +68,60 @@
     "city": "Des Moines",
     "state": "IA",
     "awesomeness": 2
+  },
+  {
+    "city": "Minneapolis",
+    "state": "MN",
+    "awesomeness": 5
+  },
+  {
+    "city": "Denver",
+    "state": "CO",
+    "awesomeness": 4
+  },
+  {
+    "city": "Iowa City",
+    "state": "IA",
+    "awesomeness": 4
+  },
+  {
+    "city": "Topeka",
+    "state": "KS",
+    "awesomeness": 2
+  },
+  {
+    "city": "Fort Collins",
+    "state": "CO",
+    "awesomeness": 5
+  },
+  {
+    "city": "South Bend",
+    "state": "IN",
+    "awesomeness": 5
+  },
+  {
+    "city": "Missoula",
+    "state": "MT",
+    "awesomeness": 4
+  },
+  {
+    "city": "Cincinatti",
+    "state": "OH",
+    "awesomeness": 2
+  },
+  {
+    "city": "Columbus",
+    "state": "OH",
+    "awesomeness": 4
+  },
+  {
+    "city": "Dickinson",
+    "state": "ND",
+    "awesomeness": 2
+  },
+  {
+    "city": "Nashville",
+    "state": "TN",
+    "awesomeness": 5
   }
 ]
